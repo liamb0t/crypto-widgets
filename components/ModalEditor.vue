@@ -48,9 +48,7 @@ const checkVals = computed(() => {
 const baseURL = 'http://localhost:3000'
 
 const html = computed(() => {
-    console.log(props.widget, 'opsjefpokj')
-    return `<iframe
-    width="${width.value}"
+    return `<iframe width="${width.value}"
     height="${height.value}"
     src="${baseURL}/widgets/${widgets[props.widget.__name]}?
     dark=${darkMode.value}
@@ -60,7 +58,8 @@ const html = computed(() => {
     &percent7d=${percentChange7d.value}
     &width=${width.value}
     &height=${height.value}"
-    </iframe>`.replace(/\s/g, '').split('src').join(' src')  
+    </iframe>`.replace(/\s+/g, " ").replace(/\?\s+/g, "?").trim()
+
 })
 
 function copyText() {
@@ -83,29 +82,33 @@ function closeModal(event) {
 
 <template>
     <div id="modal-background" class="fixed inset-0 bg-black bg-opacity-50" @click="closeModal">
-        <div id="modal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-10 border border-gray-300 shadow-md">
+        <div id="modal" class="fixed w-5/12 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-10 border border-gray-300 shadow-md">
             <div>
                 <component :is="widget" :widgetSettings="previewSettings" :isPreview="true" :darkMode="darkMode"/>
             </div>
-            <div>
-                <img class="w-5 hover:cursor-pointer" src="~/assets/img/copy-icon.svg" alt="" @click="copyText">
-                <label for="widgetcode" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ widgetType }}</label>
-                <textarea v-if="widget" id="widgetcode" readonly style="resize: none;" rows="5" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">{{ html }}
-                </textarea>
-            </div>
+          
            
             <div>
-                <BaseSearch @select-coin="setCoinId"/>
-                <BaseInput v-model="priceAlert" :placeholder="'Set price alert'"/>
-                <BaseInput v-model="height" :placeholder="'Height'"/>
-                <BaseInput v-model="width" :placeholder="'Width'"/>
-                
-                
-                <BaseCheckbox v-model="marketCap" :label="'Market Cap'"/>
-                <BaseCheckbox v-model="vol24h" :label="'Vol 24h'"/>
-                <BaseCheckbox v-model="percentChange7d" :label="'Change 7d'"/>
-                <BaseCheckbox v-model="darkMode" :label="'Dark theme'"/>
-               
+                <BaseSearch class="mt-1" @select-coin="setCoinId"/>
+              
+                <div class="flex">
+                    <BaseInput class="mt-1" v-model="priceAlert" :placeholder="'Set price alert'"/>
+                    <BaseInput class="mt-1" v-model="height" :placeholder="'Height'"/>
+                    <BaseInput class="mt-1" v-model="width" :placeholder="'Width'"/>
+                </div>
+                <div class="flex justify-between">
+                    <BaseCheckbox v-model="marketCap" :label="'Market Cap'"/>
+                    <BaseCheckbox v-model="vol24h" :label="'Vol 24h'"/>
+                    <BaseCheckbox v-model="percentChange7d" :label="'Change 7d'"/>
+                    <BaseCheckbox v-model="darkMode" :label="'Dark theme'"/>
+                </div>
+            </div>
+            <div class="relative mt-">
+                <div class="absolute w-full flex justify-end pr-2 pt-2">
+                    <img class="w-5 hover:cursor-pointer" src="~/assets/img/copy-icon.svg" alt="" @click="copyText">
+                </div>
+                <textarea v-if="widget" id="widgetcode" readonly style="resize: none;" rows="5" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">{{ html }}
+                </textarea>
             </div>
         </div>
     </div>

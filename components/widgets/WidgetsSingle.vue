@@ -86,7 +86,7 @@ const playAudio = () => {
         </div>
       </div>
       <div class="flex justify-evenly">
-        <div v-if="widgetSettings.market_cap_usd" class="border-r border-black-500 p-5">
+        <div v-if="widgetSettings.market_cap_usd" class="w-full flex flex-col items-center justify-center border-r border-black-500 p-5 last:border-0">
           <p class="font-semibold text-xs mb-2 dark:text-white">
             Market Cap
           </p>
@@ -94,7 +94,7 @@ const playAudio = () => {
             {{ (coinData.market_cap_usd/1000000000).toFixed(2) }} B USD
           </p>
         </div>
-        <div v-if="widgetSettings.volume24" class="border-r border-black-500 p-5 dark:text-white">
+        <div v-if="widgetSettings.volume24" class="w-full flex flex-col items-center justify-center border-r border-black-500 p-5 dark:text-white last:border-0">
           <p class="font-semibold text-xs mb-2">
             Vol (24H)
           </p>
@@ -102,7 +102,7 @@ const playAudio = () => {
             {{ (coinData.volume24/1000000000).toFixed(2) }} B USD
           </p>
         </div>
-        <div v-if="widgetSettings.percent_change_7d" class="p-5 dark:text-white" >
+        <div v-if="widgetSettings.percent_change_7d" class="w-full flex flex-col items-center justify-center p-5 dark:text-white last:border-0" >
           <p class="font-semibold text-xs mb-2">
             7D Change
           </p>
