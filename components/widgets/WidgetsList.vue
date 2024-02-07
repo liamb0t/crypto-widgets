@@ -18,7 +18,7 @@ const interval =  1 * 60 * 1000
 const audioAlert = ref(null)
 const isDescending = ref(false)
 
-//functions
+//functions 
 
 async function getCoinData() {
   const response = await fetch(`https://api.coinlore.net/api/tickers/?start=0&limit=10`)
@@ -29,7 +29,7 @@ async function getCoinData() {
 function classObject(filter) {
   return {
     'text-rose-500': filter < 0,
-    'text-green-400': filter >= 0,
+    'text-green-700': filter >= 0,
   }
 }
 
@@ -79,50 +79,50 @@ watch(() => props.widgetSettings.coin, (newPrice, oldPrice) => {
       <th>
         <div class="flex items-center">
           <div class="mr-0.1">
-            Price
+            1h %
           </div>
           <div>
-            <img src="~assets/img/filter-icon.svg" @click="filter('price_usd')">
+            <img src="~assets/img/filter-icon.svg" @click="filter('percent_change_1h')">
           </div>
         </div>
       </th>
       <th>
         <div class="flex items-center">
           <div class="mr-0.1">
-            Price
+            24h %
           </div>
           <div>
-            <img src="~assets/img/filter-icon.svg" @click="filter('price_usd')">
+            <img src="~assets/img/filter-icon.svg" @click="filter('percent_change_24h')">
           </div>
         </div>
       </th>
       <th>
         <div class="flex items-center">
           <div class="mr-0.1">
-            Price
+            7d %
           </div>
           <div>
-            <img src="~assets/img/filter-icon.svg" @click="filter('price_usd')">
+            <img src="~assets/img/filter-icon.svg" @click="filter('percent_change_7d')">
           </div>
         </div>
       </th>
       <th>
         <div class="flex items-center">
           <div class="mr-0.1">
-            Price
+            Market Cap
           </div>
           <div>
-            <img src="~assets/img/filter-icon.svg" @click="filter('price_usd')">
+            <img src="~assets/img/filter-icon.svg" @click="filter('market_cap_usd')">
           </div>
         </div>
       </th>
       <th>
         <div class="flex items-center">
           <div class="mr-0.1">
-            Price
+            Vol(24h)
           </div>
           <div>
-            <img src="~assets/img/filter-icon.svg" @click="filter('price_usd')">
+            <img src="~assets/img/filter-icon.svg" @click="filter('volume24')">
           </div>
         </div>
       </th>
@@ -135,12 +135,12 @@ watch(() => props.widgetSettings.coin, (newPrice, oldPrice) => {
               <td class="text-xs font-light">{{ coin.symbol }}</td> 
           </div>
       </div>
-      <td>${{ coin.price_usd }}</td>
-      <td :class="classObject(coin.percent_change_1h)">{{ coin.percent_change_1h }}%</td>
-      <td :class="classObject(coin.percent_change_24h)">{{ coin.percent_change_24h }}%</td>
-      <td :class="classObject(coin.percent_change_7d)">{{ coin.percent_change_7d }}%</td>
-      <td :class="classObject(coin.market_cap_usd)">${{ (coin.market_cap_usd/1000000000).toFixed(2) }}b</td>
-      <td :class="classObject(coin.percent_change_7d)">${{ (coin.volume24/1000000000).toFixed(2) }}b</td>
+      <td class="text-sm">${{ coin.price_usd }}</td>
+      <td class="text-sm" :class="classObject(coin.percent_change_1h)">{{ coin.percent_change_1h }}%</td>
+      <td class="text-sm" :class="classObject(coin.percent_change_24h)">{{ coin.percent_change_24h }}%</td>
+      <td class="text-sm" :class="classObject(coin.percent_change_7d)">{{ coin.percent_change_7d }}%</td>
+      <td class="text-sm" :class="classObject(coin.market_cap_usd)">${{ (coin.market_cap_usd/1000000000).toFixed(2) }}b</td>
+      <td class="text-sm" :class="classObject(coin.percent_change_7d)">${{ (coin.volume24/1000000000).toFixed(2) }}b</td>
     </tr>
   </table>
   <audio ref="audioAlert">

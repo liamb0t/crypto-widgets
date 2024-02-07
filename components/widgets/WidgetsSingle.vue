@@ -47,7 +47,7 @@ const audioAlert = ref(null)
 
 function classObject(filter) {
   return {
-    'text-rose-500': filter < 0,
+    'text-rose-700': filter < 0,
     'text-green-700': filter >= 0,
   }
 }
