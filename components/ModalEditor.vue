@@ -83,11 +83,9 @@ function closeModal(event) {
 <template>
     <div id="modal-background" class="fixed inset-0 bg-black bg-opacity-50" @click="closeModal">
         <div id="modal" class="fixed w-5/12 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-10 border border-gray-300 shadow-md">
-            <div>
+            <div v-if="previewSettings">
                 <component :is="widget" :widgetSettings="previewSettings" :isPreview="true" :darkMode="darkMode"/>
             </div>
-          
-           
             <div>
                 <BaseSearch class="mt-1" @select-coin="setCoinId"/>
               
@@ -103,6 +101,7 @@ function closeModal(event) {
                     <BaseCheckbox v-model="darkMode" :label="'Dark theme'"/>
                 </div>
             </div>
+            
             <div class="relative mt-">
                 <div class="absolute w-full flex justify-end pr-2 pt-2">
                     <img class="w-5 hover:cursor-pointer" src="~/assets/img/copy-icon.svg" alt="" @click="copyText">

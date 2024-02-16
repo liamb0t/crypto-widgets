@@ -11,25 +11,40 @@ const props = defineProps({
   }
 })
 
-const { data, refresh } = await useFetch(`/api/ticker/?id=${props.widgetSettings.coin}`)
-const interval =  1 * 60 * 1000
-setInterval(refresh, interval)
-
 const audioAlert = ref(null)
+const coins = ref(null)
 
 function classObject(filter) {
   return {
     'text-rose-500': filter < 0,
-    'text-green-400': filter >= 0,
+    'text-green-700': filter >= 0,
   }
 }
 
-watch(() => data.value.price_usd, (newPrice, oldPrice) => {
-  if (newPrice < props.alert.alert_price) {
-    // If the condition is met, play the audio
-    playAudio();
+async function getCoinData() {
+  const response = await fetch(`https://api.coinlore.net/api/tickers/?start=0&limit=10`)
+  const data = await response.json();
+  coins.value = data.data
+}
+
+async function addCoinToList() {
+  const response = await fetch(`https://api.coinlore.net/api/ticker/?id=${props.widgetSettings.coin}`)
+  const data = await response.json();
+  coins.value.push(data[0])
+}
+
+onMounted(() => {
+  getCoinData()
+})
+
+
+watch(() => props.widgetSettings.coin, (newPrice, oldPrice) => {
+  const exists = coinData.value.some(crypto => crypto.id === props.widgetSettings.coin);
+  if (!exists) {
+    addCoinToList()
   }
 });
+
 
 const playAudio = () => {
   if (audioAlert.value) {
@@ -40,21 +55,44 @@ const playAudio = () => {
 </script>
 
 <template>  
-    <tr>
-        <div class="flex items-center">
-          <img class="h-10 mr-4" :src="`https://www.coinlore.com/img/50x50/${data[0].nameid}.png`" alt="">
-            <div class="flex flex-col">
-                <td>{{ data[0].name }}</td>
-                <td>{{ data[0].symbol }}</td> 
-            </div>
-        </div>
-        <td>{{ data[0].price_usd }}</td>
-        <td :class="classObject(data[0].percent_change_1h)">{{ data[0].percent_change_1h }}</td>
-        <td :class="classObject(data[0].percent_change_24h)">{{ data[0].percent_change_24h }}</td>
-        <td :class="classObject(data[0].percent_change_7d)">{{ data[0].percent_change_7d }}</td>
-        <td>{{ widgetSettings.alertPrice }}</td>
-    </tr>
-    <audio ref="audioAlert">
-        <source src="assets/you_suffer.mp3" type="audio/mp3">
-    </audio>
+  <div class="marquee">
+    <div class="marquee-inner">
+      <div class="flex items-center mr-10" v-for="coin in coins" :key="coin.id">
+        <img class="mr-1 w-4" :src="`https://www.coinlore.com/img/50x50/${coin.nameid}.png`" alt="">
+        <span class="font-semibold mr-1 dark:text-white">{{ coin.name }}</span>
+        <span class="font-light text-xs mr-1 dark:text-white">{{ coin.symbol }}</span>
+        <span>{{ coin.price_usd }} USD</span>
+        <span :class="classObject(coin.percent_change_24h)">({{ coin.percent_change_24h }}%)</span>
+      </div>
+    </div>
+  </div>
 </template>
+ <style scoped>
+.marquee {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid black;
+}
+
+.marquee-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: marquee 30s linear infinite;
+}
+
+span {
+  margin-top: 0;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100vw);
+  }
+  100% {
+    transform: translateX(-300%);
+  }
+}
+</style>

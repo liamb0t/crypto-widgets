@@ -56,92 +56,83 @@ onMounted(() => {
   getCoinData()
 })
 
+async function addCoinToList() {
+  const response = await fetch(`https://api.coinlore.net/api/ticker/?id=${props.widgetSettings.coin}`)
+  const data = await response.json();
+  coinData.value.push(data[0])
+}
+
 watch(() => props.widgetSettings.coin, (newPrice, oldPrice) => {
-  getCoinData()
+  const exists = coinData.value.some(crypto => crypto.id === props.widgetSettings.coin);
+  if (!exists) {
+    addCoinToList()
+  }
 });
 
 </script>
 
 <template> 
-  <table>
+  <table class="w-full">
     <thead>
-      <th>Coin</th>
+      <th></th>
       <th>
-        <div class="flex items-center">
-          <div class="mr-0.1">
+        <div class="flex items-center hover:cursor-pointer">
+          <div class="mr-0.1" @click="filter('price_usd')">
             Price
           </div>
-          <div>
-            <img src="~assets/img/filter-icon.svg" @click="filter('price_usd')">
-          </div>
         </div>
       </th>
       <th>
-        <div class="flex items-center">
-          <div class="mr-0.1">
-            1h %
-          </div>
-          <div>
-            <img src="~assets/img/filter-icon.svg" @click="filter('percent_change_1h')">
-          </div>
-        </div>
-      </th>
-      <th>
-        <div class="flex items-center">
-          <div class="mr-0.1">
-            24h %
-          </div>
-          <div>
-            <img src="~assets/img/filter-icon.svg" @click="filter('percent_change_24h')">
-          </div>
-        </div>
-      </th>
-      <th>
-        <div class="flex items-center">
-          <div class="mr-0.1">
-            7d %
-          </div>
-          <div>
-            <img src="~assets/img/filter-icon.svg" @click="filter('percent_change_7d')">
-          </div>
-        </div>
-      </th>
-      <th>
-        <div class="flex items-center">
-          <div class="mr-0.1">
+        <div class="flex items-center hover:cursor-pointer">
+          <div class="mr-0.1" @click="filter('market_cap_usd')">
             Market Cap
           </div>
-          <div>
-            <img src="~assets/img/filter-icon.svg" @click="filter('market_cap_usd')">
+        </div>
+      </th>
+      <th>
+        <div class="flex items-center hover:cursor-pointer">
+          <div class="mr-0.1" @click="filter('volume24')">
+            Vol(24h)
           </div>
         </div>
       </th>
       <th>
-        <div class="flex items-center">
-          <div class="mr-0.1">
-            Vol(24h)
+        <div class="flex items-center hover:cursor-pointer">
+          <div class="mr-0.1" @click="filter('percent_change_1h')">
+            1h %
           </div>
-          <div>
-            <img src="~assets/img/filter-icon.svg" @click="filter('volume24')">
+        </div>
+      </th>
+      <th>
+        <div class="flex items-center hover:cursor-pointer">
+          <div class="mr-0.1" @click="filter('percent_change_24h')">
+            24h %
+          </div>
+        </div>
+      </th>
+      <th>
+        <div class="flex items-center hover:cursor-pointer">
+          <div class="mr-0.1" @click="filter('percent_change_7d')">
+            7d %
           </div>
         </div>
       </th>
     </thead>
     <tr v-for="coin in coinData" :key="coin.id">
       <div class="flex items-center">
-        <img class="h-10 mr-4" :src="`https://www.coinlore.com/img/50x50/${coin.nameid}.png`" alt="">
+        <img class="h-10 w-10 mr-4" :src="`https://www.coinlore.com/img/50x50/${coin.nameid}.png`" alt="">
           <div class="flex flex-col">
               <td class="font-semibold">{{ coin.name }}</td>
               <td class="text-xs font-light">{{ coin.symbol }}</td> 
           </div>
       </div>
       <td class="text-sm">${{ coin.price_usd }}</td>
+      <td class="text-sm" :class="classObject(coin.market_cap_usd)">${{ (coin.market_cap_usd/1000000000).toFixed(2) }}b</td>
+      <td class="text-sm" :class="classObject(coin.percent_change_7d)">${{ (coin.volume24/1000000000).toFixed(2) }}b</td>
       <td class="text-sm" :class="classObject(coin.percent_change_1h)">{{ coin.percent_change_1h }}%</td>
       <td class="text-sm" :class="classObject(coin.percent_change_24h)">{{ coin.percent_change_24h }}%</td>
       <td class="text-sm" :class="classObject(coin.percent_change_7d)">{{ coin.percent_change_7d }}%</td>
-      <td class="text-sm" :class="classObject(coin.market_cap_usd)">${{ (coin.market_cap_usd/1000000000).toFixed(2) }}b</td>
-      <td class="text-sm" :class="classObject(coin.percent_change_7d)">${{ (coin.volume24/1000000000).toFixed(2) }}b</td>
-    </tr>
+      </tr>
   </table>
   <audio ref="audioAlert">
       <source src="assets/you_suffer.mp3" type="audio/mp3">
